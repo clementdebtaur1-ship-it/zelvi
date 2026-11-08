@@ -309,7 +309,10 @@
     .profile-page { max-width: 620px; margin: 0 auto; padding: 24px; }
     .profile-back { border: 0; padding: 8px 0; background: transparent; color: var(--muted); font-size: 11px; font-weight: 700; }
     .profile-intro { display: grid; justify-items: center; gap: 8px; padding: 28px 16px; border-bottom: 1px solid var(--line); text-align: center; }
-    .profile-avatar { width: 76px; height: 76px; display: grid; place-items: center; border: 4px solid white; border-radius: 50%; background: var(--coral); color: white; box-shadow: 0 0 0 1px var(--line); font: 700 23px var(--display); }
+    .profile-photo-picker { display: grid; justify-items: center; gap: 8px; border: 0; padding: 0; background: transparent; color: var(--muted); font-size: 10px; font-weight: 700; }
+    .profile-avatar { width: 76px; height: 76px; display: grid; place-items: center; overflow: hidden; border: 4px solid white; border-radius: 50%; background: var(--coral); color: white; box-shadow: 0 0 0 1px var(--line); font: 700 23px var(--display); }
+    .profile-avatar img, .profile-button img { width: 100%; height: 100%; object-fit: cover; }
+    .profile-photo-input { display: none; }
     .profile-intro h2 { margin: 5px 0 0; font: 600 21px var(--display); }
     .profile-intro p { margin: 0; color: var(--muted); font-size: 12px; }
     .profile-status { display: inline-flex; align-items: center; gap: 7px; margin-top: 3px; color: var(--leaf-dark); font-size: 10px; font-weight: 700; }
@@ -382,7 +385,7 @@
     .stories-page .story-avatar { overflow: hidden; background: #dcefcf; font-size: 17px; }
     .stories-page .story-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
     .story-create-trigger .story-ring { border-color: var(--line); }
-    .story-add-mark { position: absolute; right: -2px; bottom: -2px; width: 23px; height: 23px; display: grid; place-items: center; border: 2px solid white; border-radius: 50%; background: var(--coral); color: white; font-size: 17px; line-height: 1; }
+    .story-add-mark { position: absolute; z-index: 2; right: -2px; bottom: -2px; width: 29px; height: 29px; display: grid; place-items: center; border: 3px solid white; border-radius: 50%; background: var(--coral); color: white; font-size: 20px; font-weight: 600; line-height: 1; box-shadow: 0 2px 6px #27332d30; }
     .story-composer { margin-top: 2px; border: 1px solid #ece8e1; border-top: 2px solid var(--coral); border-radius: 8px; padding: 0 15px 15px; background: #fbfaf7; }
     .story-composer-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 15px 0 13px; }
     .story-composer-head h3 { margin: 0; font: 600 14px var(--display); }
@@ -421,6 +424,7 @@
       .stories-page { padding: 18px 16px; }
       .stories-page .story-person { width: 66px; flex-basis: 66px; }
       .stories-page .story-ring { width: 60px; height: 60px; }
+      .story-add-mark { right: -1px; bottom: -1px; width: 27px; height: 27px; }
       .story-create-form { grid-template-columns: 1fr; }
       .story-upload { min-height: 108px; }
     }
@@ -429,7 +433,7 @@
 <body>
   <section class="auth-layer" id="auth-layer" aria-labelledby="auth-title">
     <form class="auth-box" id="auth-form" method="post">
-      <span class="brand"><span class="brand-mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20V6.5Z"></path><path d="M9 4v13.5M15 6.5V20"></path></svg></span><span>zelvi</span></span>
+      <span class="brand"><span class="brand-mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8A8.5 8.5 0 0 1 12.5 3h.5a8.5 8.5 0 0 1 8 8z"></path><path d="M8.5 10.5h.01M14 10.5l2 1M9 14.5c2.2 2 4.8 2 7 0"></path></svg></span><span>zelvi</span></span>
       <h1 id="auth-title">Tes moments, tes ami·e·s.</h1>
       <p>Un pseudo et un mot de passe suffisent. Aucun e-mail ni numéro de téléphone n’est demandé.</p>
       <div class="auth-tabs" role="group" aria-label="Type de connexion">
@@ -444,12 +448,12 @@
         <label for="auth-password">Mot de passe</label>
         <input id="auth-password" name="password" type="password" autocomplete="current-password" required>
       </div>
-      <button class="auth-primary" id="auth-submit" type="submit" disabled>Se connecter</button>
+      <button class="auth-primary" id="auth-submit" type="submit">Se connecter</button>
       <p class="auth-message" id="auth-message" role="status" aria-live="polite"></p>
     </form>
   </section>
   <header class="topbar" hidden>
-    <a class="brand" href="#profile" id="profile-link" aria-label="Zelvi, mon compte"><span class="brand-mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20V6.5Z"></path><path d="M9 4v13.5M15 6.5V20"></path></svg></span><span>zelvi</span></a>
+    <a class="brand" href="#profile" id="profile-link" aria-label="Zelvi, mon compte"><span class="brand-mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8A8.5 8.5 0 0 1 12.5 3h.5a8.5 8.5 0 0 1 8 8z"></path><path d="M8.5 10.5h.01M14 10.5l2 1M9 14.5c2.2 2 4.8 2 7 0"></path></svg></span><span>zelvi</span></a>
     <span class="top-divider" aria-hidden="true"></span>
     <span class="top-context">Partager les moments</span>
     <span class="top-spacer"></span>
@@ -462,7 +466,7 @@
       <button class="nav-button" data-screen="map" aria-current="page"><span class="nav-icon" aria-hidden="true">⌖</span><span class="nav-text">Carte</span></button>
       <button class="nav-button" data-screen="chat"><span class="nav-icon" aria-hidden="true">▤</span><span class="nav-text">Chat</span></button>
       <button class="nav-button" data-screen="camera"><span class="nav-icon" aria-hidden="true">◉</span><span class="nav-text">Appareil photo</span></button>
-      <button class="nav-button" data-screen="stories"><span class="nav-icon" aria-hidden="true">◌</span><span class="nav-text">Stories</span></button>
+      <button class="nav-button" data-screen="stories"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="m12 6 1.5 4.5L18 12l-4.5 1.5L12 18l-1.5-4.5L6 12l4.5-1.5z"></path></svg></span><span class="nav-text">Stories</span></button>
       <button class="nav-button" data-screen="spotlight"><span class="nav-icon" aria-hidden="true">▷</span><span class="nav-text">Spotlight</span></button>
       <div class="sidebar-bottom"><strong>Petit rappel</strong><p>Tu choisis avec qui partager ta position et tes moments.</p></div>
     </nav>
@@ -480,7 +484,7 @@
     <button class="nav-button" data-screen="map" aria-current="page"><span class="nav-icon" aria-hidden="true">⌖</span><span class="nav-text">Carte</span></button>
     <button class="nav-button" data-screen="chat"><span class="nav-icon" aria-hidden="true">▤</span><span class="nav-text">Chat</span></button>
     <button class="nav-button" data-screen="camera"><span class="nav-icon" aria-hidden="true">◉</span><span class="nav-text">Caméra</span></button>
-    <button class="nav-button" data-screen="stories"><span class="nav-icon" aria-hidden="true">◌</span><span class="nav-text">Stories</span></button>
+    <button class="nav-button" data-screen="stories"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="m12 6 1.5 4.5L18 12l-4.5 1.5L12 18l-1.5-4.5L6 12l4.5-1.5z"></path></svg></span><span class="nav-text">Stories</span></button>
     <button class="nav-button" data-screen="spotlight"><span class="nav-icon" aria-hidden="true">▷</span><span class="nav-text">Spotlight</span></button>
   </nav>
   <dialog class="logout-dialog" id="logout-dialog" aria-labelledby="logout-title">
@@ -492,142 +496,990 @@
   </dialog>
   <dialog class="story-viewer" id="story-viewer" aria-label="Story"></dialog>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script type="application/x-zelvi-prototype">
-    const people = [
-      {id:'lea', name:'Léa', status:'À 2 min', photo:'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80'},
-      {id:'noe', name:'Noé', status:'À 8 min', photo:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=120&q=80'},
-      {id:'ines', name:'Inès', status:'À 12 min', photo:'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=120&q=80'},
-      {id:'sam', name:'Sam', status:'À 18 min', photo:'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=120&q=80'}
-    ];
-    const conversations = {
-      lea:[['them','Tu as vu les photos de samedi ?'],['mine','Oui, elles sont trop bien !'],['them','Je t’en envoie une autre 📸']],
-      noe:[['them','On se retrouve au parc ?'],['mine','J’arrive dans dix minutes.'],['them','Parfait, à tout de suite !']],
-      ines:[['them','Tu viens pour le concert ?'],['mine','Oui, bien sûr !'],['them','Je garde une place près de nous']],
-      sam:[['them','Merci pour la vidéo !'],['mine','Avec plaisir 🙌'],['them','On refait ça bientôt ?']]
-    };
-    const stories = [
-      {name:'Léa', title:'Un samedi dehors', place:'Parc des Buttes-Chaumont', img:'https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=1000&q=85'},
-      {name:'Noé', title:'Sur la route', place:'Un petit détour', img:'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1000&q=85'},
-      {name:'Inès', title:'Pause café', place:'Le café du coin', img:'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1000&q=85'},
-      {name:'Sam', title:'Golden hour', place:'Fin de journée', img:'https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=1000&q=85'}
-    ];
-    const reels = [
-      {name:'@camille.en.voyage', caption:'Le calme après une longue randonnée 🌿', img:'https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=900&q=85'},
-      {name:'@noe.cuisine', caption:'Le petit-déjeuner du dimanche ☀️', img:'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=900&q=85'},
-      {name:'@ines.cree', caption:'Quelques couleurs pour commencer la journée 🎨', img:'https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?auto=format&fit=crop&w=900&q=85'}
-    ];
-    const titles = {
-      map:['Carte','Retrouve tes ami·e·s autour de toi'],
-      chat:['Chat','Des nouvelles et des petits moments'],
-      camera:['Appareil photo','Capture l’instant, partage-le à ta façon'],
-      stories:['Stories','Les moments récents de tes ami·e·s'],
-      spotlight:['Spotlight','Des idées et vidéos à découvrir']
-    };
-    let activeScreen = 'map';
-    let activePerson = 'lea';
-    let activeStory = 0;
-    let activeReel = 0;
-    let ghostMode = false;
-    let liked = false;
-    let captured = false;
-    const screen = document.getElementById('screen');
-    const toast = document.getElementById('toast');
-    let toastTimer;
-    function notify(message) {
-      toast.textContent = message;
-      toast.classList.add('show');
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+  <script>
+const screen = document.getElementById('screen');
+const toast = document.getElementById('toast');
+const titles = {
+  map: ['Carte', 'Une vraie carte, avec les ami·e·s qui partagent leur position'],
+  friends: ['Amis', 'Retrouve tes ami·e·s par leur pseudo'],
+  chat: ['Chat', 'Messages privés entre ami·e·s'],
+  stories: ['Stories', 'Les moments partagés par tes ami·e·s'],
+  profile: ['Mon compte', 'Tes informations de compte']
+};
+
+let currentUser = null;
+let friends = [];
+let requests = [];
+let locations = [];
+let stories = [];
+let selectedFriend = null;
+let activeScreen = 'map';
+let previousScreen = 'map';
+let selectedStoryIndex = -1;
+let authMode = 'login';
+let searchResult = null;
+let searchMessage = '';
+let mapInstance = null;
+let mapMarkers = null;
+let ownMarker = null;
+let locationWatch = null;
+let locationSharing = false;
+let refreshTimer = null;
+let storiesRefreshTimer = null;
+let storyPreviewUrl = null;
+let toastTimer;
+const OFFLINE_STORAGE_KEY = 'zelvi-offline-data';
+const PROFILE_PHOTOS_KEY = 'zelvi-profile-photos';
+
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, character => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[character]);
+}
+
+function initials(name) {
+  return String(name || '?').trim().slice(0, 2).toUpperCase();
+}
+
+function initial(name) {
+  return String(name || '?').trim().slice(0, 1).toUpperCase();
+}
+
+function notify(message) {
+  toast.textContent = message;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+}
+
+async function api(path, options = {}) {
+  if (window.location.protocol === 'file:') {
+    return offlineApi(path, options);
+  }
+  let response;
+  try {
+    response = await fetch(path, {
+      ...options,
+      credentials: 'same-origin',
+      headers: { ...(options.body ? { 'Content-Type': 'application/json' } : {}), ...options.headers }
+    });
+  } catch {
+    throw new Error('Impossible de joindre le serveur Zelvi. Vérifie que le serveur de connexion du site est en ligne.');
+  }
+  let result;
+  try { result = await response.json(); }
+  catch { throw new Error(`Réponse du serveur invalide (HTTP ${response.status}). Vérifie que le serveur de connexion est configuré.`); }
+  if (!response.ok) throw new Error(result.error || 'Une erreur est survenue.');
+  return result;
+}
+
+function readOfflineData() {
+  let stored;
+  try {
+    stored = localStorage.getItem(OFFLINE_STORAGE_KEY);
+  } catch {
+    throw new Error('Le stockage local est inaccessible dans ce navigateur.');
+  }
+  if (!stored) return { users: [], friendships: [], requests: [], messages: [], locations: [], stories: [], activeUid: null };
+  try {
+    return JSON.parse(stored);
+  } catch {
+    throw new Error('Les données locales de Zelvi sont illisibles. Efface les données du site dans les paramètres du navigateur.');
+  }
+}
+
+function writeOfflineData(data) {
+  try {
+    localStorage.setItem(OFFLINE_STORAGE_KEY, JSON.stringify(data));
+  } catch {
+    throw new Error('Impossible d’enregistrer les données dans ce navigateur. Vérifie l’espace de stockage disponible.');
+  }
+}
+
+function offlineUser(data, required = true) {
+  const user = data.users.find(item => item.uid === data.activeUid);
+  if (!user && required) throw new Error('Connecte-toi pour continuer.');
+  return user || null;
+}
+
+function offlinePair(firstUid, secondUid) {
+  return [firstUid, secondUid].sort().join(':');
+}
+
+function getProfilePhoto(uid = currentUser?.uid) {
+  if (!uid) return '';
+  try {
+    const photos = JSON.parse(localStorage.getItem(PROFILE_PHOTOS_KEY) || '{}');
+    return photos[uid] || '';
+  } catch {
+    throw new Error('La photo de profil enregistrée est illisible.');
+  }
+}
+
+function saveProfilePhoto(uid, photo) {
+  let photos;
+  try {
+    photos = JSON.parse(localStorage.getItem(PROFILE_PHOTOS_KEY) || '{}');
+    photos[uid] = photo;
+    localStorage.setItem(PROFILE_PHOTOS_KEY, JSON.stringify(photos));
+  } catch {
+    throw new Error('Impossible d’enregistrer cette photo. Vérifie l’espace de stockage disponible.');
+  }
+}
+
+function profilePhotoMarkup(uid, fallback) {
+  const photo = getProfilePhoto(uid);
+  return photo ? `<img src="${escapeHtml(photo)}" alt="">` : escapeHtml(fallback);
+}
+
+async function resizeProfilePhoto(file) {
+  if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+    throw new Error('Choisis une photo au format JPG, PNG ou WebP.');
+  }
+  if (file.size > 10 * 1024 * 1024) throw new Error('La photo doit peser moins de 10 Mo.');
+  const dataUrl = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error('Impossible de lire cette photo.'));
+    reader.readAsDataURL(file);
+  });
+  const image = await new Promise((resolve, reject) => {
+    const element = new Image();
+    element.onload = () => resolve(element);
+    element.onerror = () => reject(new Error('Cette photo ne peut pas être ouverte.'));
+    element.src = dataUrl;
+  });
+  const scale = Math.min(1, 320 / Math.max(image.naturalWidth, image.naturalHeight));
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+  canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+  canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
+  return canvas.toDataURL('image/jpeg', 0.82);
+}
+
+function offlineIsFriend(data, firstUid, secondUid) {
+  return data.friendships.includes(offlinePair(firstUid, secondUid));
+}
+
+function toHex(bytes) {
+  return [...new Uint8Array(bytes)].map(byte => byte.toString(16).padStart(2, '0')).join('');
+}
+
+async function hashOfflinePassword(password, salt) {
+  if (!crypto.subtle) throw new Error('Le chiffrement local n’est pas disponible dans ce navigateur.');
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveBits']);
+  const bits = await crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt: Uint8Array.from(salt.match(/../g), byte => parseInt(byte, 16)), iterations: 310000 }, key, 256);
+  return toHex(bits);
+}
+
+async function offlineApi(path, options = {}) {
+  const url = new URL(path, window.location.href);
+  const routePath = url.pathname.replace(/^\/[A-Za-z]:/, '');
+  const method = options.method || 'GET';
+  let body = {};
+  if (options.body) {
+    try { body = JSON.parse(options.body); }
+    catch { throw new Error('Données invalides.'); }
+  }
+  const data = readOfflineData();
+  const isPublicRoute = routePath === '/api/session'
+    || (method === 'POST' && ['/api/signup', '/api/login'].includes(routePath));
+  const currentUser = offlineUser(data, !isPublicRoute);
+  const now = Math.floor(Date.now() / 1000);
+
+  if (method === 'GET' && routePath === '/api/session') return { user: currentUser && { uid: currentUser.uid, username: currentUser.username } };
+  if (method === 'POST' && routePath === '/api/signup') {
+    const username = String(body.username || '').trim();
+    const password = String(body.password || '');
+    if (!username || username.length > 20 || /[\x00-\x1f\x7f]/.test(username)) throw new Error('Le pseudo doit contenir de 1 à 20 caractères imprimables.');
+    if (!password) throw new Error('Le mot de passe est requis.');
+    if (data.users.some(user => user.username.toLowerCase() === username.toLowerCase())) throw new Error('Ce pseudo est déjà utilisé.');
+    const salt = toHex(crypto.getRandomValues(new Uint8Array(16)));
+    const user = { uid: crypto.randomUUID(), username, salt, passwordHash: await hashOfflinePassword(password, salt) };
+    data.users.push(user);
+    data.activeUid = user.uid;
+    writeOfflineData(data);
+    return { user: { uid: user.uid, username: user.username } };
+  }
+  if (method === 'POST' && routePath === '/api/login') {
+    const username = String(body.username || '').trim();
+    const user = data.users.find(item => item.username.toLowerCase() === username.toLowerCase());
+    if (!user || await hashOfflinePassword(String(body.password || ''), user.salt) !== user.passwordHash) throw new Error('Pseudo ou mot de passe incorrect.');
+    data.activeUid = user.uid;
+    writeOfflineData(data);
+    return { user: { uid: user.uid, username: user.username } };
+  }
+  if (method === 'POST' && routePath === '/api/logout') {
+    data.activeUid = null;
+    writeOfflineData(data);
+    return { ok: true };
+  }
+  if (method === 'GET' && routePath === '/api/friends') {
+    const uidSet = new Set(data.friendships.filter(pair => pair.split(':').includes(currentUser.uid)).flatMap(pair => pair.split(':').filter(uid => uid !== currentUser.uid)));
+    return { friends: data.users.filter(user => uidSet.has(user.uid)).map(({ uid, username }) => ({ uid, username })) };
+  }
+  if (method === 'GET' && routePath === '/api/friend-requests') {
+    return { requests: data.requests.filter(item => item.toUid === currentUser.uid && item.status === 'pending').map(item => ({ fromUid: item.fromUid, username: data.users.find(user => user.uid === item.fromUid)?.username })).filter(item => item.username) };
+  }
+  if (method === 'GET' && routePath === '/api/users/search') {
+    const username = (url.searchParams.get('username') || '').trim().toLowerCase();
+    const user = data.users.find(item => item.username.toLowerCase() === username && item.uid !== currentUser.uid);
+    return { user: user ? { uid: user.uid, username: user.username } : null };
+  }
+  if (method === 'GET' && routePath === '/api/locations') {
+    const friends = data.friendships.filter(pair => pair.split(':').includes(currentUser.uid)).flatMap(pair => pair.split(':').filter(uid => uid !== currentUser.uid));
+    return { locations: data.locations.filter(item => friends.includes(item.uid) && item.updatedAt >= now - 300).map(item => ({ ...item, username: data.users.find(user => user.uid === item.uid)?.username })).filter(item => item.username) };
+  }
+  if (method === 'GET' && routePath === '/api/stories') {
+    const friendUids = data.friendships.filter(pair => pair.split(':').includes(currentUser.uid)).flatMap(pair => pair.split(':').filter(uid => uid !== currentUser.uid));
+    const activeStories = data.stories.filter(story => story.expiresAt > now && (story.userUid === currentUser.uid || friendUids.includes(story.userUid)));
+    return { stories: activeStories.map(story => ({
+      ...story,
+      username: data.users.find(user => user.uid === story.userUid)?.username || '',
+      isMine: story.userUid === currentUser.uid,
+      viewed: story.viewers.includes(currentUser.uid),
+      viewCount: story.viewers.length,
+      mediaUrl: `data:${story.mediaType};base64,${story.mediaData}`
+    })) };
+  }
+  if (method === 'GET' && routePath === '/api/messages') {
+    const friendUid = url.searchParams.get('friend') || '';
+    if (!offlineIsFriend(data, currentUser.uid, friendUid)) throw new Error('Les messages sont réservés aux ami·e·s accepté·e·s.');
+    return { messages: data.messages.filter(item => offlinePair(item.senderUid, item.friendUid) === offlinePair(currentUser.uid, friendUid)).slice(-200).map(({ id, senderUid, text, createdAt }) => ({ id, senderUid, text, createdAt })) };
+  }
+  if (method === 'POST' && routePath === '/api/friend-requests') {
+    const friendUid = String(body.friendUid || '');
+    if (!friendUid || friendUid === currentUser.uid) throw new Error('Demande invalide.');
+    if (!data.users.some(user => user.uid === friendUid)) throw new Error('Compte introuvable.');
+    if (offlineIsFriend(data, currentUser.uid, friendUid)) throw new Error('Cette personne est déjà dans tes ami·e·s.');
+    if (data.requests.some(item => item.fromUid === friendUid && item.toUid === currentUser.uid && item.status === 'pending')) throw new Error('Cette personne t’a déjà envoyé une demande.');
+    if (data.requests.some(item => item.fromUid === currentUser.uid && item.toUid === friendUid && item.status === 'pending')) throw new Error('Une demande est déjà en attente.');
+    data.requests = data.requests.filter(item => item.fromUid !== currentUser.uid || item.toUid !== friendUid);
+    data.requests.push({ fromUid: currentUser.uid, toUid: friendUid, status: 'pending', createdAt: now });
+    writeOfflineData(data);
+    return { ok: true };
+  }
+  if (method === 'POST' && routePath === '/api/friend-requests/respond') {
+    const request = data.requests.find(item => item.fromUid === body.fromUid && item.toUid === currentUser.uid && item.status === 'pending');
+    if (!request) throw new Error('Demande introuvable.');
+    request.status = body.accept === true ? 'accepted' : 'rejected';
+    if (body.accept === true) data.friendships.push(offlinePair(currentUser.uid, request.fromUid));
+    writeOfflineData(data);
+    return { ok: true };
+  }
+  if (method === 'POST' && routePath === '/api/messages') {
+    const friendUid = String(body.friendUid || '');
+    const text = String(body.text || '').trim();
+    if (!text || text.length > 1000) throw new Error('Le message doit contenir de 1 à 1000 caractères.');
+    if (!offlineIsFriend(data, currentUser.uid, friendUid)) throw new Error('Les messages sont réservés aux ami·e·s accepté·e·s.');
+    const message = { id: crypto.randomUUID(), senderUid: currentUser.uid, friendUid, text, createdAt: now };
+    data.messages.push(message);
+    writeOfflineData(data);
+    return { message };
+  }
+  if (method === 'POST' && routePath === '/api/stories') {
+    const mediaType = String(body.mediaType || '');
+    const mediaData = String(body.mediaData || '');
+    const caption = String(body.caption || '').trim();
+    if (!['text', 'image/jpeg', 'image/png', 'image/webp', 'video/mp4', 'video/webm'].includes(mediaType)) throw new Error('Choisis un texte, une image ou une vidéo prise en charge.');
+    if (caption.length > 240) throw new Error('La légende est limitée à 240 caractères.');
+    if (mediaType === 'text' && !caption) throw new Error('Écris un texte pour publier cette story.');
+    if (mediaType !== 'text' && (!mediaData || mediaData.length > 4 * 1024 * 1024 * 1.4)) throw new Error('Le fichier doit peser 4 Mo maximum.');
+    const storyId = crypto.randomUUID();
+    data.stories.push({ id: storyId, userUid: currentUser.uid, caption, mediaType, mediaData, createdAt: now, expiresAt: now + 86400, viewers: [] });
+    writeOfflineData(data);
+    return { ok: true, storyId };
+  }
+  if (method === 'POST' && routePath === '/api/stories/view') {
+    const story = data.stories.find(item => item.id === body.storyId && item.expiresAt > now);
+    if (!story) throw new Error('Cette story n’est plus disponible.');
+    if (story.userUid !== currentUser.uid && !offlineIsFriend(data, currentUser.uid, story.userUid)) throw new Error('Cette story est réservée aux ami·e·s accepté·e·s.');
+    if (!story.viewers.includes(currentUser.uid)) story.viewers.push(currentUser.uid);
+    writeOfflineData(data);
+    return { ok: true };
+  }
+  if (method === 'PUT' && routePath === '/api/account') {
+    const username = String(body.username || '').trim();
+    if (!username || username.length > 20 || /[\x00-\x1f\x7f]/.test(username)) throw new Error('Le pseudo doit contenir de 1 à 20 caractères imprimables.');
+    if (await hashOfflinePassword(String(body.currentPassword || ''), currentUser.salt) !== currentUser.passwordHash) throw new Error('Le mot de passe actuel est incorrect.');
+    const otherUser = data.users.find(user => user.uid !== currentUser.uid && user.username.toLowerCase() === username.toLowerCase());
+    if (otherUser) throw new Error('Ce pseudo est déjà utilisé.');
+    currentUser.username = username;
+    if (body.newPassword) {
+      if (body.newPassword.length < 8) throw new Error('Le nouveau mot de passe doit contenir au moins 8 caractères.');
+      currentUser.salt = toHex(crypto.getRandomValues(new Uint8Array(16)));
+      currentUser.passwordHash = await hashOfflinePassword(body.newPassword, currentUser.salt);
     }
-    function avatar(person, cls='avatar') { return `<img class="${cls}" src="${person.photo}" alt="">`; }
-    function renderMap() {
-      const pin = (person, cls) => `<button class="map-pin ${cls}" data-action="open-person" data-person="${person.id}" aria-label="Ouvrir la discussion avec ${person.name}">${avatar(person)}<span>${person.name}</span></button>`;
-      screen.innerHTML = `<section class="map-layout ${ghostMode?'ghost-active':''}" aria-label="Carte des ami·e·s">
-        <div class="map-canvas"><div class="map-park"></div><div class="map-water"></div><span class="map-label l1">Square des Lilas</span><span class="map-label l2">La Manufacture</span><span class="map-label l3">Canal du Midi</span>
-          ${pin(people[0],'pin-one')}${pin(people[1],'pin-two')}${pin(people[2],'pin-three')}${pin(people[3],'pin-four')}
-          <div class="map-zoom"><button data-action="zoom-in" aria-label="Zoom avant">+</button><button data-action="zoom-out" aria-label="Zoom arrière">−</button></div>
+    writeOfflineData(data);
+    return { user: { uid: currentUser.uid, username } };
+  }
+  if (method === 'PUT' && routePath === '/api/location') {
+    const lat = Number(body.lat), lng = Number(body.lng);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) throw new Error('Coordonnées invalides.');
+    data.locations = data.locations.filter(item => item.uid !== currentUser.uid);
+    data.locations.push({ uid: currentUser.uid, lat, lng, updatedAt: now });
+    writeOfflineData(data);
+    return { ok: true };
+  }
+  if (method === 'DELETE' && routePath === '/api/location') {
+    data.locations = data.locations.filter(item => item.uid !== currentUser.uid);
+    writeOfflineData(data);
+    return { ok: true };
+  }
+  throw new Error('Fonction indisponible.');
+}
+
+function setAuthMessage(message, error = true) {
+  const element = document.getElementById('auth-message');
+  element.textContent = message;
+  element.classList.toggle('error', error);
+}
+
+function setAuthMode(mode) {
+  authMode = mode;
+  const signup = mode === 'signup';
+  document.getElementById('auth-submit').textContent = signup ? 'Créer mon compte' : 'Se connecter';
+  document.getElementById('auth-password').autocomplete = signup ? 'new-password' : 'current-password';
+  document.getElementById('auth-mode-login').setAttribute('aria-pressed', String(!signup));
+  document.getElementById('auth-mode-signup').setAttribute('aria-pressed', String(signup));
+  document.getElementById('auth-message').textContent = '';
+  document.getElementById('auth-message').classList.remove('error');
+}
+
+function setSignedIn(isSignedIn) {
+  document.getElementById('auth-layer').hidden = isSignedIn;
+  document.querySelector('.app-frame').hidden = !isSignedIn;
+  document.querySelector('.topbar').hidden = !isSignedIn;
+  document.querySelector('.mobile-nav').hidden = !isSignedIn;
+  const account = document.getElementById('account-button');
+  account.innerHTML = isSignedIn ? profilePhotoMarkup(currentUser?.uid, initial(currentUser?.username)) : '?';
+  account.setAttribute('aria-label', isSignedIn ? `Ouvrir le compte de ${currentUser.username}` : 'Mon compte');
+  document.querySelector('.status').textContent = isSignedIn ? `Connecté·e : ${currentUser.username}` : 'Hors ligne';
+}
+
+function installNavigation() {
+  const definitions = [
+    ['map', '<circle cx="12" cy="12" r="9"></circle><path d="m16.2 7.8-2.6 5.8-5.8 2.6 2.6-5.8z"></path>', 'Carte'],
+    ['friends', '<path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="10" cy="7" r="4"></circle><path d="M20 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path>', 'Amis'],
+    ['chat', '<path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"></path>', 'Chat'],
+    ['stories', '<circle cx="12" cy="12" r="9"></circle><path d="m12 6 1.5 4.5L18 12l-4.5 1.5L12 18l-1.5-4.5L6 12l4.5-1.5z"></path>', 'Stories']
+  ];
+  for (const group of [document.querySelector('.sidebar'), document.querySelector('.mobile-nav')]) {
+    group.querySelectorAll('[data-screen]').forEach(button => button.remove());
+    for (const [name, icon, label] of definitions) {
+      const button = document.createElement('button');
+      button.className = 'nav-button';
+      button.dataset.screen = name;
+      button.innerHTML = `<span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24">${icon}</svg></span><span class="nav-text">${label}</span>`;
+      group.insertBefore(button, group.querySelector('.sidebar-bottom') || null);
+    }
+  }
+}
+
+function renderHeader() {
+  const [title, caption] = titles[activeScreen];
+  document.getElementById('panel-title').textContent = title;
+  document.getElementById('panel-caption').textContent = caption;
+  document.querySelectorAll('[data-screen]').forEach(button => {
+    if (button.dataset.screen === activeScreen) button.setAttribute('aria-current', 'page');
+    else button.removeAttribute('aria-current');
+  });
+}
+
+function renderCurrent() {
+  renderHeader();
+  if (activeScreen === 'map') renderMap();
+  else if (activeScreen === 'friends') renderFriends();
+  else if (activeScreen === 'chat') renderChat();
+  else if (activeScreen === 'stories') renderStories();
+  else if (activeScreen === 'profile') renderProfile();
+}
+
+function renderProfile() {
+  const username = escapeHtml(currentUser?.username);
+  const avatar = profilePhotoMarkup(currentUser?.uid, initial(currentUser?.username));
+  screen.innerHTML = `<section class="profile-page">
+    <button class="profile-back" data-action="profile-home">← Retour</button>
+    <div class="profile-intro"><label class="profile-photo-picker" for="profile-photo"><span class="profile-avatar">${avatar}</span><span>Changer la photo</span></label>
+      <input class="profile-photo-input" id="profile-photo" type="file" accept="image/jpeg,image/png,image/webp" aria-label="Choisir une photo de profil">
+      <h2>${username}</h2><p>@${username}</p><span class="profile-status">Compte connecté</span>
+    </div>
+    <form class="profile-edit-form" id="account-form">
+      <label for="profile-username">Pseudo<input id="profile-username" name="username" maxlength="20" value="${username}" required></label>
+      <label for="current-password">Mot de passe actuel<input id="current-password" name="currentPassword" type="password" autocomplete="current-password" required></label>
+      <label for="new-password">Nouveau mot de passe<input id="new-password" name="newPassword" type="password" minlength="8" autocomplete="new-password"></label>
+      <p class="profile-edit-note">Laisse le nouveau mot de passe vide pour le conserver. Le pseudo et le mot de passe actuel sont requis.</p>
+      <button class="profile-save" type="submit">Enregistrer les changements</button>
+      <p class="profile-feedback" id="account-feedback" role="status" aria-live="polite"></p>
+    </form>
+    <button class="logout-button" data-action="logout">Se déconnecter</button>
+  </section>`;
+  document.getElementById('profile-photo').addEventListener('change', updateProfilePhoto);
+}
+
+async function updateProfilePhoto(event) {
+  const input = event.currentTarget;
+  const file = input.files[0];
+  if (!file || !currentUser) return;
+  try {
+    saveProfilePhoto(currentUser.uid, await resizeProfilePhoto(file));
+    setSignedIn(true);
+    renderProfile();
+    notify('Photo de profil mise à jour.');
+  } catch (error) {
+    notify(error.message);
+  } finally {
+    input.value = '';
+  }
+}
+
+function openProfile() {
+  if (!currentUser) return;
+  if (activeScreen !== 'profile') previousScreen = activeScreen;
+  activeScreen = 'profile';
+  renderCurrent();
+}
+
+function renderMap() {
+  screen.innerHTML = `<section class="map-layout">
+    <div class="map-canvas" id="friend-map" aria-label="Carte OpenStreetMap"></div>
+    <aside class="map-side">
+      <h3>Autour de toi</h3>
+      <p>Seuls tes ami·e·s accepté·e·s peuvent voir ta position. Le partage reste désactivé tant que tu ne l’actives pas.</p>
+      <button class="ghost-toggle" data-action="toggle-location" aria-pressed="${locationSharing}"><span>${locationSharing ? 'Arrêter le partage de position' : 'Partager ma position'}</span><span class="switch" aria-hidden="true"></span></button>
+      <button class="map-locate" data-action="locate-me">Me localiser sur la carte</button>
+      <div class="friend-list-heading">TES AMI·E·S <span>${friends.length}</span></div>
+      ${friends.length ? friends.map(friend => {
+        const location = locations.find(item => item.uid === friend.uid);
+        return `<button class="friend-row friend-open" data-action="open-chat" data-friend="${friend.uid}"><span class="initial-avatar">${escapeHtml(initials(friend.username))}</span><span class="friend-meta"><strong>${escapeHtml(friend.username)}</strong><span>${location ? 'Position partagée' : 'Position non partagée'}</span></span><span class="friend-status ${location ? '' : 'offline'}" aria-hidden="true"></span></button>`;
+      }).join('') : '<p class="empty-note">Ajoute des ami·e·s pour les retrouver ici.</p>'}
+    </aside>
+  </section>`;
+  if (!window.L) {
+    notify('La carte n’a pas pu charger OpenStreetMap. Vérifie ta connexion.');
+    return;
+  }
+  mapInstance = L.map('friend-map', { zoomControl: false }).setView([46.6, 2.4], 6);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  }).addTo(mapInstance);
+  L.control.zoom({ position: 'bottomright' }).addTo(mapInstance);
+  mapMarkers = L.layerGroup().addTo(mapInstance);
+  setTimeout(() => mapInstance?.invalidateSize(), 0);
+  updateMarkers();
+}
+
+function updateMarkers() {
+  if (!mapInstance || !mapMarkers) return;
+  mapMarkers.clearLayers();
+  for (const location of locations) {
+    L.circleMarker([location.lat, location.lng], {
+      radius: 9, color: '#fff', weight: 3, fillColor: '#f07c65', fillOpacity: 1
+    }).bindPopup(escapeHtml(location.username)).addTo(mapMarkers);
+  }
+  if (ownMarker) ownMarker.addTo(mapMarkers);
+}
+
+function renderFriends() {
+  screen.innerHTML = `<section class="friends-page">
+    <form id="friend-search-form" class="friend-search-form"><label for="friend-search">Pseudo de la personne</label>
+      <div><input id="friend-search" name="username" maxlength="20" autocomplete="off" placeholder="Pseudo" required><button type="submit">Rechercher</button></div>
+      <p class="search-feedback" id="friend-search-feedback">Recherche par pseudo, sans numéro de téléphone.</p>
+    </form>
+    <section class="friend-section"><h2>Demandes reçues <span>${requests.length}</span></h2>
+      ${requests.length ? requests.map(request => `<div class="request-row"><span class="initial-avatar">${escapeHtml(initials(request.username))}</span><div class="friend-meta"><strong>${escapeHtml(request.username)}</strong><span>Souhaite être ton ami·e</span></div><button data-action="accept-request" data-from="${request.fromUid}">Accepter</button><button class="quiet-button" data-action="decline-request" data-from="${request.fromUid}" aria-label="Refuser">×</button></div>`).join('') : '<p class="empty-note">Aucune demande pour le moment.</p>'}
+    </section>
+    <section class="friend-section"><h2>Tes ami·e·s <span>${friends.length}</span></h2>
+      ${friends.length ? friends.map(friend => `<div class="request-row"><span class="initial-avatar">${escapeHtml(initials(friend.username))}</span><div class="friend-meta"><strong>${escapeHtml(friend.username)}</strong><span>Ami·e</span></div><button data-action="open-chat" data-friend="${friend.uid}">Écrire</button></div>`).join('') : '<p class="empty-note">Ta liste est vide. Recherche un pseudo pour commencer.</p>'}
+    </section>
+  </section>`;
+  const feedback = document.getElementById('friend-search-feedback');
+  feedback.textContent = searchMessage || 'Recherche par pseudo, sans numéro de téléphone.';
+  if (searchResult) feedback.innerHTML = `@${escapeHtml(searchResult.username)} <button class="inline-action" data-action="send-request" data-friend="${searchResult.uid}">Ajouter</button>`;
+}
+
+function renderChat(messages = []) {
+  const friend = selectedFriend && friends.find(item => item.uid === selectedFriend.uid);
+  screen.innerHTML = `<section class="chat-layout"><aside class="chat-list"><p class="chat-list-title">AMIS</p>
+    ${friends.length ? friends.map(item => `<button class="contact ${friend?.uid === item.uid ? 'active' : ''}" data-action="select-chat" data-friend="${item.uid}"><span class="initial-avatar">${escapeHtml(initials(item.username))}</span><span class="contact-text"><strong>${escapeHtml(item.username)}</strong><span>Conversation privée</span></span></button>`).join('') : '<p class="empty-note">Ajoute un·e ami·e pour discuter.</p>'}
+    </aside><section class="conversation">${friend ? `<header class="conversation-head"><span class="initial-avatar">${escapeHtml(initials(friend.username))}</span><div><strong>${escapeHtml(friend.username)}</strong><span>Chat privé</span></div></header>
+      <div class="message-list" id="message-list">${messages.length ? messages.map(message => `<div class="message ${message.senderUid === currentUser.uid ? 'mine' : ''}">${escapeHtml(message.text)}<time>${new Date(message.createdAt * 1000).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</time></div>`).join('') : '<p class="empty-note message-empty">Pas encore de message. Dis bonjour !</p>'}</div>
+      <form class="composer" id="message-form"><input id="message-input" maxlength="1000" placeholder="Écrire un message…" autocomplete="off" aria-label="Écrire un message" required><button class="send-button" type="submit" aria-label="Envoyer">↑</button></form>` : '<div class="chat-empty"><strong>Choisis un·e ami·e</strong><p>Les conversations sont conservées dans ce navigateur.</p></div>'}</section></section>`;
+  const list = document.getElementById('message-list');
+  if (list) list.scrollTop = list.scrollHeight;
+}
+
+function renderStories() {
+  const groups = new Map();
+  for (const story of stories) {
+    if (!groups.has(story.userUid)) groups.set(story.userUid, []);
+    groups.get(story.userUid).push(story);
+  }
+  const people = [...groups.entries()].map(([uid, items]) => {
+    const person = items[0];
+    const latest = items[items.length - 1];
+    const viewed = items.every(item => item.viewed || item.isMine);
+    const avatar = latest.mediaType === 'image/jpeg' || latest.mediaType === 'image/png' || latest.mediaType === 'image/webp'
+      ? `<img src="${escapeHtml(latest.mediaUrl)}" alt="">`
+      : escapeHtml(initials(person.username));
+    return `<button class="story-person ${person.isMine ? 'story-own' : ''}" data-action="view-story" data-owner="${escapeHtml(uid)}">
+      <span class="story-ring ${viewed ? 'story-seen' : 'has-story'}"><span class="story-avatar">${avatar}</span></span>
+      <span>${person.isMine ? 'Votre story' : escapeHtml(person.username)}</span>
+    </button>`;
+  }).join('');
+  screen.innerHTML = `<section class="stories-page">
+    <header class="stories-head"><div><p class="stories-kicker">TES AMI·E·S</p><h2>Vos moments</h2></div><span class="stories-expiry">24 H</span></header>
+    <div class="stories-list"><button class="story-person story-create-trigger" data-action="add-story">
+      <span class="story-ring"><span class="story-avatar">${profilePhotoMarkup(currentUser?.uid, initial(currentUser?.username))}</span><span class="story-add-mark">+</span></span>
+      <span>Créer</span></button>${people || '<p class="story-empty">Les stories de tes ami·e·s apparaîtront ici.</p>'}
+    </div>
+    <section class="story-composer">
+      <header class="story-composer-head"><h3>Partager un moment</h3><span>Visible pendant 24 h</span></header>
+      <form class="story-create-form" id="story-form">
+        <label class="story-upload" for="story-image">
+          <input id="story-image" type="file" accept="image/jpeg,image/png,image/webp,video/mp4,video/webm">
+          <span class="story-upload-copy" id="story-upload-copy"><span class="story-upload-symbol">＋</span><strong>Ajouter une photo ou vidéo</strong><small>JPG, PNG, WebP, MP4</small></span>
+          <span class="story-preview-wrap" id="story-preview" hidden></span>
+        </label>
+        <div class="story-compose-fields">
+          <label class="story-caption-label" for="story-caption">Ton moment<textarea id="story-caption" maxlength="240" rows="3" placeholder="Écris quelque chose…"></textarea></label>
+          <div class="story-compose-footer"><span>Partagé avec tes ami·e·s</span><button class="story-publish" type="submit">Partager la story</button></div>
         </div>
-        <aside class="map-side"><h3>Autour de toi</h3><p>Position partagée avec les ami·e·s que tu as choisis.</p>
-          <button class="ghost-toggle" data-action="ghost" aria-pressed="${ghostMode}"><span>${ghostMode?'Mode discret activé':'Activer le mode discret'}</span><span class="switch" aria-hidden="true"></span></button>
-          ${people.map(person=>`<div class="friend-row">${avatar(person)}<div class="friend-meta"><strong>${person.name}</strong><span>${ghostMode?'Position masquée':person.status}</span></div><span class="friend-status" aria-hidden="true"></span></div>`).join('')}
-        </aside>
-      </section>`;
+      </form>
+    </section>
+  </section>`;
+  document.getElementById('story-image').addEventListener('change', event => {
+    const file = event.currentTarget.files[0];
+    const preview = document.getElementById('story-preview');
+    if (storyPreviewUrl) URL.revokeObjectURL(storyPreviewUrl);
+    storyPreviewUrl = null;
+    preview.replaceChildren();
+    if (!file) {
+      preview.hidden = true;
+      document.getElementById('story-upload-copy').hidden = false;
+      return;
     }
-    function renderChat() {
-      const person = people.find(item=>item.id===activePerson);
-      const contacts = people.map(item=>`<button class="contact ${item.id===activePerson?'active':''}" data-action="contact" data-person="${item.id}">${avatar(item)}<span class="contact-text"><strong>${item.name}</strong><span>${conversations[item.id].at(-1)[1]}</span></span><time>12:${String(40-people.indexOf(item)*4).padStart(2,'0')}</time></button>`).join('');
-      const messages = conversations[activePerson].map(([side,text])=>`<div class="message ${side==='mine'?'mine':''}">${text}<time>${side==='mine'?'Envoyé':'Reçu'} · 12:42</time></div>`).join('');
-      screen.innerHTML = `<section class="chat-layout"><aside class="chat-list"><input class="search-box" id="contact-search" type="search" placeholder="Rechercher une conversation" aria-label="Rechercher une conversation"><p class="chat-list-title">Messages récents</p>${contacts}</aside>
-        <section class="conversation" aria-label="Conversation avec ${person.name}"><header class="conversation-head">${avatar(person)}<div><strong>${person.name}</strong><span>Actif·ve récemment</span></div><span class="top-spacer"></span><button class="round-button" data-action="call" aria-label="Appel">◖</button></header><div class="message-list"><p class="message-day">AUJOURD’HUI</p>${messages}</div><form class="composer" id="message-form"><input id="message-input" type="text" placeholder="Écrire un message…" autocomplete="off" aria-label="Écrire un message"><button class="send-button" type="submit" aria-label="Envoyer">↑</button></form></section></section>`;
+    storyPreviewUrl = URL.createObjectURL(file);
+    const media = document.createElement(file.type.startsWith('video/') ? 'video' : 'img');
+    media.className = 'story-preview';
+    media.src = storyPreviewUrl;
+    if (media instanceof HTMLVideoElement) {
+      media.muted = true;
+      media.loop = true;
+      media.autoplay = true;
+      media.playsInline = true;
     }
-    function renderCamera() {
-      screen.innerHTML = `<section class="camera-layout"><div class="camera-stage"><img class="camera-image" src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1300&q=85" alt="Ami·e·s réunis en plein air"><div class="camera-top"><button class="camera-action" data-action="flip" aria-label="Retourner la caméra">↻</button><span class="camera-caption">${captured?'Snap capturé':'Un moment avec les ami·e·s'}</span><button class="camera-action" data-action="lens" aria-label="Changer de filtre">✳</button></div><div class="camera-bottom"><button class="camera-action" data-action="gallery" aria-label="Ouvrir la galerie">▧</button><button class="shutter" data-action="capture" aria-label="Prendre une photo"></button><button class="camera-action" data-action="timer" aria-label="Minuteur">◷</button></div></div><aside class="capture-side"><span class="eyebrow">Appareil photo</span><h3>${captured?'C’est dans la boîte.':'Prêt·e pour le moment ?'}</h3><p>Appuie sur le déclencheur pour créer un Snap, puis choisis où le partager.</p><p class="capture-status" id="capture-status">${captured?'Photo ajoutée à tes souvenirs.':''}</p><button class="story-share" data-action="share-story">${captured?'Ajouter à ma Story':'Partager un moment'}</button></aside></section>`;
-    }
-    function renderStories() {
-      const story = stories[activeStory];
-      const peopleChips = stories.map((item,index)=>`<button class="story-person ${index===activeStory?'':'seen'}" data-action="story-person" data-index="${index}"><span class="story-ring"><img src="${item.img}" alt=""></span><span>${item.name}</span></button>`).join('');
-      const storyCards = stories.filter((item,index)=>index!==activeStory).map(item=>`<article class="story-card"><img src="${item.img}" alt=""><div><strong>${item.title}</strong><span>${item.name} · Aujourd’hui</span></div></article>`).join('');
-      screen.innerHTML = `<section class="stories-page"><header class="stories-head"><div><h2>À la une de tes ami·e·s</h2><p>Leurs petits instants, partagés aujourd’hui.</p></div><button class="round-button" data-action="story-settings" aria-label="Options des Stories">···</button></header><div class="stories-list">${peopleChips}</div><div class="story-layout"><article class="story-feature"><img src="${story.img}" alt="${story.title}"><div class="story-progress"><i class="active"></i><i></i><i></i></div><div class="story-feature-copy"><span>${story.name} · ${story.place}</span><h3>${story.title}</h3></div><button class="story-next" data-action="next-story" aria-label="Story suivante">→</button></article><aside class="story-side"><h3>À regarder ensuite</h3>${storyCards}</aside></div></section>`;
-    }
-    function renderSpotlight() {
-      const reel = reels[activeReel];
-      screen.innerHTML = `<section class="spotlight-page"><div class="spotlight-side"><h3>Des idées du moment.</h3><p>Fais défiler les vidéos courtes et découvre de nouveaux créateurs.</p></div><article class="spotlight-card"><img class="spotlight-image" src="${reel.img}" alt="Aperçu de la vidéo"><span class="reel-progress"></span><span class="spotlight-top">À découvrir</span><div class="spotlight-profile"><strong>${reel.name}</strong><p>${reel.caption}</p></div><div class="spotlight-actions"><button class="spotlight-action" data-action="like" aria-pressed="${liked}" aria-label="${liked?'Retirer le j’aime':'Aimer cette vidéo'}">${liked?'♥':'♡'}</button><span class="spotlight-action-label">${liked?'Aimé':'J’aime'}</span><button class="spotlight-action" data-action="share-reel" aria-label="Partager la vidéo">↗</button><span class="spotlight-action-label">Partager</span></div></article><div class="spotlight-side right"><h3>Ta sélection.</h3><p>Une nouvelle vidéo t’attend juste après celle-ci.</p></div><button class="next-reel" data-action="next-reel">Vidéo suivante <span aria-hidden="true">→</span></button></section>`;
-    }
-    function renderScreen() {
-      document.getElementById('panel-title').textContent = titles[activeScreen][0];
-      document.getElementById('panel-caption').textContent = titles[activeScreen][1];
-      document.querySelectorAll('[data-screen]').forEach(button=>{
-        if(button.dataset.screen===activeScreen) button.setAttribute('aria-current','page');
-        else button.removeAttribute('aria-current');
+    preview.append(media);
+    preview.hidden = false;
+    document.getElementById('story-upload-copy').hidden = true;
+  });
+}
+
+async function loadStories() {
+  try {
+    const result = await api('/api/stories');
+    stories = result.stories;
+    if (activeScreen === 'stories') renderStories();
+  } catch (error) {
+    notify(error.message);
+  }
+}
+
+async function publishStory(event) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const file = form.querySelector('#story-image').files[0];
+  const button = form.querySelector('[type="submit"]');
+  const caption = form.querySelector('#story-caption').value.trim();
+  if (!file && !caption) return notify('Ajoute un texte ou une photo à ta story.');
+  if (file && file.size > 4 * 1024 * 1024) return notify('Le fichier doit peser 4 Mo maximum.');
+  if (file && !['image/jpeg', 'image/png', 'image/webp', 'video/mp4', 'video/webm'].includes(file.type)) return notify('Choisis une image ou une vidéo prise en charge.');
+  button.disabled = true;
+  try {
+    let mediaData = '';
+    if (file) {
+      const dataUrl = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(new Error('Impossible de lire ce fichier.'));
+        reader.readAsDataURL(file);
       });
-      ({map:renderMap,chat:renderChat,camera:renderCamera,stories:renderStories,spotlight:renderSpotlight})[activeScreen]();
+      mediaData = String(dataUrl).split(',', 2)[1];
     }
-    document.querySelectorAll('[data-screen]').forEach(button=>button.addEventListener('click',()=>{activeScreen=button.dataset.screen;renderScreen();}));
-    screen.addEventListener('click',event=>{
-      const button=event.target.closest('[data-action]');
-      if(!button)return;
-      const action=button.dataset.action;
-      if(action==='ghost'){ghostMode=!ghostMode;renderMap();}
-      else if(action==='open-person'){activePerson=button.dataset.person;activeScreen='chat';renderScreen();}
-      else if(action==='contact'){activePerson=button.dataset.person;renderChat();}
-      else if(action==='capture'){captured=true;renderCamera();notify('Snap capturé et ajouté à tes souvenirs.');}
-      else if(action==='share-story'){if(!captured){captured=true;renderCamera();}notify('Ajouté à ta Story.');}
-      else if(action==='flip')notify('Caméra retournée.');
-      else if(action==='lens')notify('Effet sélectionné.');
-      else if(action==='gallery')notify('Ta galerie est prête.');
-      else if(action==='timer')notify('Minuteur réglé sur 3 secondes.');
-      else if(action==='story-person'){activeStory=Number(button.dataset.index);renderStories();}
-      else if(action==='next-story'){activeStory=(activeStory+1)%stories.length;renderStories();}
-      else if(action==='story-settings')notify('Stories visibles par tes ami·e·s.');
-      else if(action==='like'){liked=!liked;renderSpotlight();}
-      else if(action==='next-reel'){activeReel=(activeReel+1)%reels.length;liked=false;renderSpotlight();}
-      else if(action==='share-reel')notify('Lien de la vidéo copié.');
-      else if(action==='zoom-in'||action==='zoom-out')notify(action==='zoom-in'?'Carte agrandie.':'Carte réduite.');
-      else if(action==='call')notify('Appel vocal avec '+people.find(person=>person.id===activePerson).name+'.');
+    await api('/api/stories', {
+      method: 'POST',
+      body: JSON.stringify({ mediaType: file ? file.type : 'text', mediaData, caption })
     });
-    screen.addEventListener('submit',event=>{
-      if(event.target.id!=='message-form')return;
-      event.preventDefault();
-      const input=document.getElementById('message-input');
-      const text=input.value.trim();
-      if(!text)return;
-      conversations[activePerson].push(['mine',text]);
-      renderChat();
-      document.getElementById('message-input').focus();
-      document.querySelector('.message-list').scrollTop=document.querySelector('.message-list').scrollHeight;
+    notify('Story partagée.');
+    await loadStories();
+  } catch (error) {
+    notify(error.message);
+  } finally {
+    if (button.isConnected) button.disabled = false;
+  }
+}
+
+async function showStory(index) {
+  if (index < 0 || index >= stories.length) return;
+  selectedStoryIndex = index;
+  const story = stories[index];
+  const fromAuthor = stories.filter(item => item.userUid === story.userUid);
+  const ageMinutes = Math.max(0, Math.floor((Date.now() - story.createdAt * 1000) / 60000));
+  const age = ageMinutes < 60 ? `${ageMinutes} min` : `${Math.floor(ageMinutes / 60)} h`;
+  const media = story.mediaType === 'text'
+    ? `<div class="story-viewer-text">${escapeHtml(story.caption)}</div>`
+    : story.mediaType.startsWith('video/')
+      ? `<video class="story-viewer-image" src="${escapeHtml(story.mediaUrl)}" autoplay muted controls playsinline></video>`
+      : `<img class="story-viewer-image" src="${escapeHtml(story.mediaUrl)}" alt="Story de ${escapeHtml(story.username)}">`;
+  const dialog = document.getElementById('story-viewer');
+  dialog.innerHTML = `<div class="story-viewer-content ${story.mediaType === 'text' ? 'text-only' : ''}">
+    ${media}
+    <div class="story-viewer-progress">${fromAuthor.map(item => `<i class="${item.id === story.id ? 'active' : ''}"></i>`).join('')}</div>
+    <header class="story-viewer-head"><span class="story-avatar">${escapeHtml(initials(story.username))}</span><div><strong>${escapeHtml(story.username)}</strong><time>${age}</time></div>
+      <button class="story-viewer-close" data-action="close-story" aria-label="Fermer">×</button></header>
+    ${story.mediaType === 'text' || !story.caption ? '' : `<p class="story-viewer-caption">${escapeHtml(story.caption)}</p>`}
+    ${story.isMine ? `<footer class="story-viewer-foot">${story.viewCount} vue${story.viewCount === 1 ? '' : 's'}</footer>` : ''}
+    <button class="story-step previous" data-action="previous-story" aria-label="Story précédente" ${index === 0 ? 'disabled' : ''}></button>
+    <button class="story-step next" data-action="next-story" aria-label="Story suivante" ${index === stories.length - 1 ? 'disabled' : ''}></button>
+  </div>`;
+  if (!dialog.open) dialog.showModal();
+  if (!story.isMine && !story.viewed) {
+    try {
+      await api('/api/stories/view', { method: 'POST', body: JSON.stringify({ storyId: story.id }) });
+      story.viewed = true;
+      if (activeScreen === 'stories') renderStories();
+    } catch (error) {
+      notify(error.message);
+    }
+  }
+}
+
+function openStory(ownerUid) {
+  const index = stories.findIndex(story => story.userUid === ownerUid);
+  if (index !== -1) showStory(index);
+}
+
+function handleStoryDialogClick(event) {
+  const action = event.target.closest('[data-action]')?.dataset.action;
+  const dialog = document.getElementById('story-viewer');
+  if (event.target === dialog || action === 'close-story') dialog.close();
+  else if (action === 'previous-story') showStory(selectedStoryIndex - 1);
+  else if (action === 'next-story') showStory(selectedStoryIndex + 1);
+}
+
+async function refreshData() {
+  if (!currentUser) return;
+  try {
+    const [friendData, requestData, locationData] = await Promise.all([
+      api('/api/friends'), api('/api/friend-requests'), api('/api/locations')
+    ]);
+    friends = friendData.friends;
+    requests = requestData.requests;
+    locations = locationData.locations;
+    if (activeScreen === 'map') updateMarkers();
+    if (activeScreen === 'friends') renderFriends();
+    if (activeScreen === 'chat' && selectedFriend) await refreshMessages(false);
+  } catch (error) {
+    if (error.message.startsWith('Connecte-toi') || error.message.startsWith('Ta session a expiré')) {
+      currentUser = null;
+      clearInterval(refreshTimer);
+      setSignedIn(false);
+      screen.replaceChildren();
+      setAuthMessage(error.message);
+      return;
+    }
+    notify(error.message);
+  }
+}
+
+function startRefreshTimers() {
+  clearInterval(refreshTimer);
+  clearInterval(storiesRefreshTimer);
+  refreshTimer = setInterval(refreshData, 5000);
+  storiesRefreshTimer = setInterval(() => {
+    if (currentUser && activeScreen === 'stories') loadStories();
+  }, 30000);
+}
+
+async function refreshMessages(render = true) {
+  if (!selectedFriend) return;
+  try {
+    const result = await api(`/api/messages?friend=${encodeURIComponent(selectedFriend.uid)}`);
+    if (render && activeScreen === 'chat') renderChat(result.messages);
+    else if (activeScreen === 'chat') renderChat(result.messages);
+  } catch (error) {
+    notify(error.message);
+  }
+}
+
+async function openChat(friend) {
+  selectedFriend = friend;
+  activeScreen = 'chat';
+  renderCurrent();
+  await refreshMessages();
+}
+
+async function handleAuth(event) {
+  event.preventDefault();
+  const username = document.getElementById('auth-username').value.trim();
+  const password = document.getElementById('auth-password').value;
+  const button = document.getElementById('auth-submit');
+  button.disabled = true;
+  setAuthMessage(authMode === 'signup' ? 'Création du compte…' : 'Connexion…', false);
+  try {
+    const result = await api(authMode === 'signup' ? '/api/signup' : '/api/login', {
+      method: 'POST', body: JSON.stringify({ username, password })
     });
-    screen.addEventListener('input',event=>{
-      if(event.target.id!=='contact-search')return;
-      const query=event.target.value.toLowerCase();
-      document.querySelectorAll('.contact').forEach(contact=>contact.hidden=!contact.innerText.toLowerCase().includes(query));
-    });
-    document.getElementById('search-action').addEventListener('click',()=>{
-      if(activeScreen==='chat'){document.getElementById('contact-search')?.focus();return;}
-      activeScreen='chat';renderScreen();document.getElementById('contact-search')?.focus();
-    });
-    document.getElementById('more-action').addEventListener('click',()=>notify('Tout est à jour.'));
-    renderScreen();
+    currentUser = result.user;
+    setSignedIn(true);
+    activeScreen = 'map';
+    await refreshData();
+    renderCurrent();
+    startRefreshTimers();
+  } catch (error) {
+    setAuthMessage(error.message);
+  } finally {
+    button.disabled = false;
+  }
+}
+
+async function searchFriend(event) {
+  event.preventDefault();
+  searchResult = null;
+  searchMessage = 'Recherche…';
+  renderFriends();
+  try {
+    const username = document.getElementById('friend-search').value.trim();
+    const result = await api(`/api/users/search?username=${encodeURIComponent(username)}`);
+    if (!result.user) searchMessage = 'Aucun compte ne correspond à ce pseudo.';
+    else if (friends.some(friend => friend.uid === result.user.uid)) searchMessage = 'Cette personne est déjà dans tes ami·e·s.';
+    else {
+      searchResult = result.user;
+      searchMessage = '';
+    }
+  } catch (error) {
+    searchMessage = error.message;
+  }
+  renderFriends();
+}
+
+async function sendFriendRequest(friendUid) {
+  try {
+    await api('/api/friend-requests', { method: 'POST', body: JSON.stringify({ friendUid }) });
+    searchResult = null;
+    searchMessage = 'Demande envoyée.';
+    renderFriends();
+    await refreshData();
+  } catch (error) {
+    notify(error.message);
+  }
+}
+
+async function respondToRequest(fromUid, accept) {
+  try {
+    await api('/api/friend-requests/respond', { method: 'POST', body: JSON.stringify({ fromUid, accept }) });
+    await refreshData();
+    renderFriends();
+    notify(accept ? 'Vous êtes maintenant ami·e·s.' : 'Demande refusée.');
+  } catch (error) {
+    notify(error.message);
+  }
+}
+
+async function updateAccount(event) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const button = form.querySelector('[type="submit"]');
+  const feedback = document.getElementById('account-feedback');
+  const body = {
+    username: form.querySelector('#profile-username').value.trim(),
+    currentPassword: form.querySelector('#current-password').value,
+    newPassword: form.querySelector('#new-password').value
+  };
+  button.disabled = true;
+  feedback.textContent = 'Enregistrement…';
+  feedback.classList.remove('error');
+  try {
+    const result = await api('/api/account', { method: 'PUT', body: JSON.stringify(body) });
+    currentUser = result.user;
+    setSignedIn(true);
+    notify('Compte mis à jour.');
+    renderProfile();
+  } catch (error) {
+    feedback.textContent = error.message;
+    feedback.classList.add('error');
+  } finally {
+    if (button.isConnected) button.disabled = false;
+  }
+}
+
+async function sendMessage(event) {
+  event.preventDefault();
+  const input = document.getElementById('message-input');
+  const text = input.value.trim();
+  if (!text || !selectedFriend) return;
+  try {
+    await api('/api/messages', { method: 'POST', body: JSON.stringify({ friendUid: selectedFriend.uid, text }) });
+    input.value = '';
+    await refreshMessages();
+  } catch (error) {
+    notify(error.message);
+  }
+}
+
+function startLocationSharing() {
+  if (!navigator.geolocation) return notify('La géolocalisation n’est pas disponible sur cet appareil.');
+  if (!window.isSecureContext) return notify('La géolocalisation nécessite localhost ou une page HTTPS.');
+  locationWatch = navigator.geolocation.watchPosition(async position => {
+    const { latitude: lat, longitude: lng } = position.coords;
+    locationSharing = true;
+    ownMarker = L.circleMarker([lat, lng], { radius: 8, color: '#fff', weight: 3, fillColor: '#557e38', fillOpacity: 1 });
+    if (mapInstance) {
+      mapInstance.setView([lat, lng], 14);
+      updateMarkers();
+    }
+    try {
+      await api('/api/location', { method: 'PUT', body: JSON.stringify({ lat, lng }) });
+      const toggle = document.querySelector('[data-action="toggle-location"]');
+      if (toggle) {
+        toggle.setAttribute('aria-pressed', 'true');
+        toggle.querySelector('span').textContent = 'Arrêter le partage de position';
+      }
+    } catch (error) {
+      notify(error.message);
+      stopLocationSharing();
+    }
+  }, error => {
+    const messages = { 1: 'Autorise la géolocalisation pour partager ta position.', 2: 'Position indisponible.', 3: 'La demande de position a expiré.' };
+    notify(messages[error.code] || 'Géolocalisation impossible.');
+    stopLocationSharing(false);
+  }, { enableHighAccuracy: true, maximumAge: 10000, timeout: 20000 });
+  notify('Demande d’autorisation de position…');
+}
+
+async function stopLocationSharing(removeRemote = true) {
+  if (locationWatch !== null) navigator.geolocation.clearWatch(locationWatch);
+  locationWatch = null;
+  locationSharing = false;
+  ownMarker = null;
+  if (removeRemote && currentUser) {
+    try { await api('/api/location', { method: 'DELETE' }); }
+    catch (error) { notify(error.message); }
+  }
+  if (activeScreen === 'map' && currentUser) renderMap();
+}
+
+function locateMe() {
+  if (!navigator.geolocation) return notify('Géolocalisation indisponible.');
+  navigator.geolocation.getCurrentPosition(position => {
+    mapInstance?.setView([position.coords.latitude, position.coords.longitude], 14);
+  }, () => notify('Position actuelle inaccessible.'), { enableHighAccuracy: true, timeout: 15000 });
+}
+
+async function handleScreenClick(event) {
+  const button = event.target.closest('[data-screen], [data-action]');
+  if (!button) return;
+  if (button.dataset.screen) {
+    activeScreen = button.dataset.screen;
+    renderCurrent();
+    if (activeScreen === 'chat' && selectedFriend) await refreshMessages();
+    if (activeScreen === 'stories') await loadStories();
+    return;
+  }
+  if (button.dataset.action === 'profile-home') {
+    activeScreen = previousScreen;
+    renderCurrent();
+    if (activeScreen === 'chat' && selectedFriend) await refreshMessages();
+  } else if (button.dataset.action === 'logout') handleLogout();
+  else if (button.dataset.action === 'add-story') document.getElementById('story-image').click();
+  else if (button.dataset.action === 'view-story') openStory(button.dataset.owner);
+  else if (button.dataset.action === 'toggle-location') {
+    if (locationSharing) await stopLocationSharing();
+    else startLocationSharing();
+  } else if (button.dataset.action === 'locate-me') locateMe();
+  else if (button.dataset.action === 'send-request') await sendFriendRequest(button.dataset.friend);
+  else if (button.dataset.action === 'accept-request') await respondToRequest(button.dataset.from, true);
+  else if (button.dataset.action === 'decline-request') await respondToRequest(button.dataset.from, false);
+  else if (button.dataset.action === 'open-chat' || button.dataset.action === 'select-chat') {
+    const friend = friends.find(item => item.uid === button.dataset.friend);
+    if (friend) await openChat(friend);
+  }
+}
+
+function handleLogout() {
+  if (currentUser) document.getElementById('logout-dialog').showModal();
+}
+
+async function confirmLogout(event) {
+  event.preventDefault();
+  document.getElementById('logout-dialog').close();
+  await stopLocationSharing();
+  try {
+    await api('/api/logout', { method: 'POST', body: '{}' });
+  } finally {
+    currentUser = null;
+    friends = [];
+    requests = [];
+    locations = [];
+    stories = [];
+    selectedFriend = null;
+    clearInterval(refreshTimer);
+    clearInterval(storiesRefreshTimer);
+    setAuthMode('login');
+    setSignedIn(false);
+    screen.replaceChildren();
+  }
+}
+
+document.getElementById('auth-form').addEventListener('submit', handleAuth);
+document.getElementById('auth-submit').disabled = false;
+document.getElementById('auth-mode-login').addEventListener('click', () => setAuthMode('login'));
+document.getElementById('auth-mode-signup').addEventListener('click', () => setAuthMode('signup'));
+document.getElementById('account-button').addEventListener('click', openProfile);
+document.getElementById('profile-link').addEventListener('click', event => {
+  event.preventDefault();
+  openProfile();
+});
+document.getElementById('logout-cancel').addEventListener('click', () => document.getElementById('logout-dialog').close());
+document.getElementById('logout-form').addEventListener('submit', confirmLogout);
+document.getElementById('search-action').addEventListener('click', () => {
+  activeScreen = 'friends';
+  renderCurrent();
+  document.getElementById('friend-search')?.focus();
+});
+document.querySelectorAll('.sidebar, .mobile-nav').forEach(group => group.addEventListener('click', handleScreenClick));
+screen.addEventListener('click', handleScreenClick);
+screen.addEventListener('submit', event => {
+  if (event.target.id === 'friend-search-form') searchFriend(event);
+  if (event.target.id === 'message-form') sendMessage(event);
+  if (event.target.id === 'account-form') updateAccount(event);
+  if (event.target.id === 'story-form') publishStory(event);
+});
+document.getElementById('story-viewer').addEventListener('click', handleStoryDialogClick);
+
+installNavigation();
+setAuthMode('login');
+api('/api/session').then(async result => {
+  activeScreen = 'map';
+  selectedFriend = null;
+  currentUser = result.user;
+  if (!currentUser) {
+    setSignedIn(false);
+    return;
+  }
+  setSignedIn(true);
+  await refreshData();
+  renderCurrent();
+  startRefreshTimers();
+}).catch(error => setAuthMessage(error.message));
+
+window.addEventListener('pagehide', () => {
+  if (locationWatch !== null) {
+    navigator.geolocation.clearWatch(locationWatch);
+    fetch('/api/location', { method: 'DELETE', credentials: 'same-origin', keepalive: true });
+  }
+});
   </script>
-  <script type="module" src="./zelvi.js"></script>
 </body>
 </html>
