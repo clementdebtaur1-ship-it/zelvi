@@ -121,6 +121,26 @@
     .composer { display: flex; align-items: center; gap: 8px; padding: 12px 15px; border-top: 1px solid var(--line); }
     .composer input { min-width: 0; flex: 1; border: 0; border-radius: 20px; padding: 11px 14px; background: #f5f7f4; font-size: 10px; }
     .send-button { width: 36px; height: 36px; border: 0; border-radius: 50%; background: var(--ink); color: white; font-size: 14px; }
+    .composer-tools { position: relative; }
+    .sound-toggle { width: 36px; height: 36px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 50%; background: white; color: var(--ink); }
+    .sound-toggle svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .sound-picker { position: absolute; z-index: 4; right: 0; bottom: 46px; width: min(320px, calc(100vw - 42px)); max-height: min(390px, 60vh); overflow: auto; padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: white; box-shadow: 0 8px 28px #20292724; }
+    .sound-picker[hidden] { display: none; }
+    .sound-picker-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+    .sound-picker-head strong { font: 600 12px var(--display); }
+    .sound-picker-head a { color: var(--leaf-dark); font-size: 9px; font-weight: 700; text-decoration: none; }
+    .sound-search { width: 100%; min-height: 34px; margin-bottom: 8px; border: 1px solid var(--line); border-radius: 7px; padding: 7px 9px; background: #f7f8f6; font-size: 10px; }
+    .sound-option { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-top: 1px solid #eef0ed; }
+    .sound-option[hidden] { display: none; }
+    .sound-option-copy { flex: 1; min-width: 0; }
+    .sound-option-copy strong { display: block; font-size: 10px; }
+    .sound-option-copy span { color: var(--muted); font-size: 8px; }
+    .sound-option button { min-height: 30px; border: 1px solid var(--line); border-radius: 7px; padding: 0 9px; background: white; font-size: 9px; font-weight: 700; }
+    .sound-option button.send-sound { border-color: var(--ink); background: var(--ink); color: white; }
+    .sound-message { display: grid; gap: 6px; min-width: 190px; }
+    .sound-message strong { font-size: 10px; }
+    .sound-message audio { width: 100%; max-width: 270px; height: 34px; }
+    .sound-message a { color: var(--leaf-dark); font-size: 8px; text-decoration: none; }
 
     /* Camera */
     .camera-layout { min-height: 490px; height: 100%; display: grid; grid-template-columns: minmax(0,1fr) 245px; background: #202927; }
@@ -427,6 +447,7 @@
       .story-add-mark { right: -1px; bottom: -1px; width: 27px; height: 27px; }
       .story-create-form { grid-template-columns: 1fr; }
       .story-upload { min-height: 108px; }
+      .sound-picker { right: auto; left: 0; width: min(320px, calc(100vw - 42px)); }
     }
   </style>
 </head>
@@ -530,6 +551,13 @@ let storyPreviewUrl = null;
 let toastTimer;
 const OFFLINE_STORAGE_KEY = 'zelvi-offline-data';
 const PROFILE_PHOTOS_KEY = 'zelvi-profile-photos';
+const CHAT_SOUNDS = [
+  { id: 'bruh', title: 'BRUH', audioUrl: 'https://www.myinstants.com/media/sounds/movie_1.mp3', pageUrl: 'https://www.myinstants.com/en/instant/bruh/' },
+  { id: 'snapchat', title: 'Notification Snapchat', audioUrl: 'https://www.myinstants.com/media/sounds/snapchat-message.mp3', pageUrl: 'https://www.myinstants.com/en/instant/snapchat-message-4240/' },
+  { id: 'vine-boom', title: 'Vine Boom', audioUrl: 'https://www.myinstants.com/media/sounds/vine-boom.mp3', pageUrl: 'https://www.myinstants.com/en/instant/vine-boom-sound-70972/' },
+  { id: 'toc-toc', title: 'Toc toc, on frappe à ma porte', audioUrl: 'https://www.myinstants.com/media/sounds/toc-toc-on-frappe-a-ma-porte.mp3', pageUrl: 'https://www.myinstants.com/en/instant/toc-toc-on-frappe-a-ma-porte-53523/' }
+];
+let soundPreview = null;
 
 function escapeHtml(value) {
   return String(value ?? '').replace(/[&<>"']/g, character => ({
@@ -1001,13 +1029,51 @@ function renderFriends() {
 
 function renderChat(messages = []) {
   const friend = selectedFriend && friends.find(item => item.uid === selectedFriend.uid);
+  const renderMessage = message => {
+    const soundMatch = /^\[\[zelvi-sound:([a-z0-9-]+)\]\]$/.exec(message.text);
+    const sound = soundMatch && CHAT_SOUNDS.find(item => item.id === soundMatch[1]);
+    const content = sound
+      ? `<div class="sound-message"><strong>🔊 ${escapeHtml(sound.title)}</strong><audio controls preload="none" src="${sound.audioUrl}" aria-label="Écouter ${escapeHtml(sound.title)}"></audio><a href="${sound.pageUrl}" target="_blank" rel="noopener noreferrer">MyInstants</a></div>`
+      : escapeHtml(message.text);
+    return `<div class="message ${message.senderUid === currentUser.uid ? 'mine' : ''}">${content}<time>${new Date(message.createdAt * 1000).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</time></div>`;
+  };
+  const soundOptions = CHAT_SOUNDS.map(sound => `<div class="sound-option" data-sound-title="${escapeHtml(sound.title.toLowerCase())}">
+    <div class="sound-option-copy"><strong>${escapeHtml(sound.title)}</strong><span>Son hébergé par MyInstants</span></div>
+    <button type="button" data-action="preview-chat-sound" data-sound="${sound.id}" aria-label="Écouter ${escapeHtml(sound.title)}">Écouter</button>
+    <button class="send-sound" type="button" data-action="send-chat-sound" data-sound="${sound.id}">Envoyer</button>
+  </div>`).join('');
   screen.innerHTML = `<section class="chat-layout"><aside class="chat-list"><p class="chat-list-title">AMIS</p>
     ${friends.length ? friends.map(item => `<button class="contact ${friend?.uid === item.uid ? 'active' : ''}" data-action="select-chat" data-friend="${item.uid}"><span class="initial-avatar">${escapeHtml(initials(item.username))}</span><span class="contact-text"><strong>${escapeHtml(item.username)}</strong><span>Conversation privée</span></span></button>`).join('') : '<p class="empty-note">Ajoute un·e ami·e pour discuter.</p>'}
     </aside><section class="conversation">${friend ? `<header class="conversation-head"><span class="initial-avatar">${escapeHtml(initials(friend.username))}</span><div><strong>${escapeHtml(friend.username)}</strong><span>Chat privé</span></div></header>
-      <div class="message-list" id="message-list">${messages.length ? messages.map(message => `<div class="message ${message.senderUid === currentUser.uid ? 'mine' : ''}">${escapeHtml(message.text)}<time>${new Date(message.createdAt * 1000).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</time></div>`).join('') : '<p class="empty-note message-empty">Pas encore de message. Dis bonjour !</p>'}</div>
-      <form class="composer" id="message-form"><input id="message-input" maxlength="1000" placeholder="Écrire un message…" autocomplete="off" aria-label="Écrire un message" required><button class="send-button" type="submit" aria-label="Envoyer">↑</button></form>` : '<div class="chat-empty"><strong>Choisis un·e ami·e</strong><p>Les conversations sont conservées dans ce navigateur.</p></div>'}</section></section>`;
+      <div class="message-list" id="message-list">${messages.length ? messages.map(renderMessage).join('') : '<p class="empty-note message-empty">Pas encore de message. Dis bonjour !</p>'}</div>
+      <form class="composer" id="message-form"><div class="composer-tools"><button class="sound-toggle" type="button" data-action="toggle-sound-picker" aria-label="Choisir un son MyInstants" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"></path><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"></path></svg></button>
+        <div class="sound-picker" id="sound-picker" hidden><div class="sound-picker-head"><strong>Répondre avec un son</strong><a href="https://www.myinstants.com/fr/" target="_blank" rel="noopener noreferrer">Explorer MyInstants ↗</a></div>
+          <input class="sound-search" id="sound-search" type="search" placeholder="Chercher un son" aria-label="Chercher un son">
+          ${soundOptions}
+        </div></div><input id="message-input" maxlength="1000" placeholder="Écrire un message…" autocomplete="off" aria-label="Écrire un message"><button class="send-button" type="submit" aria-label="Envoyer">↑</button></form>` : '<div class="chat-empty"><strong>Choisis un·e ami·e</strong><p>Les conversations sont conservées dans ce navigateur.</p></div>'}</section></section>`;
+  document.getElementById('sound-search')?.addEventListener('input', event => {
+    const query = event.currentTarget.value.trim().toLowerCase();
+    document.querySelectorAll('.sound-option').forEach(option => {
+      option.hidden = !option.dataset.soundTitle.includes(query);
+    });
+  });
   const list = document.getElementById('message-list');
   if (list) list.scrollTop = list.scrollHeight;
+}
+
+async function sendChatSound(soundId) {
+  const sound = CHAT_SOUNDS.find(item => item.id === soundId);
+  if (!sound || !selectedFriend) return;
+  try {
+    await api('/api/messages', {
+      method: 'POST',
+      body: JSON.stringify({ friendUid: selectedFriend.uid, text: `[[zelvi-sound:${sound.id}]]` })
+    });
+    document.getElementById('sound-picker').hidden = true;
+    await refreshMessages();
+  } catch (error) {
+    notify(error.message);
+  }
 }
 
 function renderStories() {
@@ -1328,6 +1394,14 @@ async function sendMessage(event) {
   }
 }
 
+function previewChatSound(soundId) {
+  const sound = CHAT_SOUNDS.find(item => item.id === soundId);
+  if (!sound) return;
+  if (soundPreview) soundPreview.pause();
+  soundPreview = new Audio(sound.audioUrl);
+  soundPreview.play().catch(() => notify('Impossible de lire ce son. Vérifie ta connexion Internet.'));
+}
+
 function startLocationSharing() {
   if (!navigator.geolocation) return notify('La géolocalisation n’est pas disponible sur cet appareil.');
   if (!window.isSecureContext) return notify('La géolocalisation nécessite localhost ou une page HTTPS.');
@@ -1387,7 +1461,13 @@ async function handleScreenClick(event) {
     if (activeScreen === 'stories') await loadStories();
     return;
   }
-  if (button.dataset.action === 'profile-home') {
+  if (button.dataset.action === 'toggle-sound-picker') {
+    const picker = document.getElementById('sound-picker');
+    picker.hidden = !picker.hidden;
+    button.setAttribute('aria-expanded', String(!picker.hidden));
+  } else if (button.dataset.action === 'preview-chat-sound') previewChatSound(button.dataset.sound);
+  else if (button.dataset.action === 'send-chat-sound') await sendChatSound(button.dataset.sound);
+  else if (button.dataset.action === 'profile-home') {
     activeScreen = previousScreen;
     renderCurrent();
     if (activeScreen === 'chat' && selectedFriend) await refreshMessages();
